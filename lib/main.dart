@@ -129,8 +129,8 @@ class _RealTimeObjectDetectionState extends State<RealTimeObjectDetection> {
 
     setState(() {
       this.recognitions = recognitions;
-      // imageHeight = image.height;
-      // imageWidth = image.width;
+      imageHeight = image.height;
+      imageWidth = image.width;
     });
   }
 
@@ -141,7 +141,7 @@ class _RealTimeObjectDetectionState extends State<RealTimeObjectDetection> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text('Real-time Object Detection'),
+        title: Text('agi ka jub'),
       ),
       body: Column(
         // mainAxisAlignment: MainAxisAlignment.center,
@@ -202,33 +202,41 @@ class BoundingBoxes extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: recognitions.map((rec) {
-        var x = rec["rect"]["x"] * screenW;
-        var y = rec["rect"]["y"] * screenH;
-        double w = rec["rect"]["w"] * screenW;
-        double h = rec["rect"]["h"] * screenH;
+        if (rec["rect"] != null &&
+            rec["rect"]["x"] != null &&
+            rec["rect"]["y"] != null &&
+            rec["rect"]["w"] != null &&
+            rec["rect"]["h"] != null) {
+          var x = rec["rect"]["x"] * screenW;
+          var y = rec["rect"]["y"] * screenH;
+          double w = rec["rect"]["w"] * screenW;
+          double h = rec["rect"]["h"] * screenH;
 
-        return Positioned(
-          left: x,
-          top: y,
-          width: w,
-          height: h,
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.red,
-                width: 3,
+          return Positioned(
+            left: x,
+            top: y,
+            width: w,
+            height: h,
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.red,
+                  width: 3,
+                ),
+              ),
+              child: Text(
+                "${rec["detectedClass"]} ${(rec["confidenceInClass"] * 100).toStringAsFixed(0)}% Width:${(w).ceil()} Heght: ${h.ceil()}",
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 15,
+                  background: Paint()..color = Colors.black,
+                ),
               ),
             ),
-            child: Text(
-              "${rec["detectedClass"]} ${(rec["confidenceInClass"] * 100).toStringAsFixed(0)}% Width:${(w).ceil()} Heght: ${h.ceil()}",
-              style: TextStyle(
-                color: Colors.red,
-                fontSize: 15,
-                background: Paint()..color = Colors.black,
-              ),
-            ),
-          ),
-        );
+          );
+        } else {
+          return Container();
+        }
       }).toList(),
     );
   }
